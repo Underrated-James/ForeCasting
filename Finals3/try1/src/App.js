@@ -3,8 +3,8 @@ import FileUpload from "./FileUpload";
 import { preprocessData } from "./Preprocessing";
 import { createModel, trainModel, predictSales } from "./Model";
 import { Line } from "react-chartjs-2";
-import { Chart as ChartJS } from 'chart.js/auto'; // For visualization
-import * as tf from '@tensorflow/tfjs';
+import { Chart as ChartJS } from "chart.js/auto"; // For visualization
+import * as tf from "@tensorflow/tfjs";
 
 function App() {
   const [processedData, setProcessedData] = useState(null);
@@ -26,7 +26,7 @@ function App() {
     // Set actual data for chart (sales_date, quantity_sold)
     setActualData(data.map((row) => ({
       x: row.sales_date,
-      y: row.quantity_sold
+      y: row.quantity_sold,
     })));
 
     console.log("Processed Data:", data); // Debugging log
@@ -85,46 +85,114 @@ function App() {
     labels: processedData ? processedData.map((row) => row.sales_date) : [], // Sales dates for X-axis
     datasets: [
       {
-        label: 'Actual Sales',
+        label: "Actual Sales",
         data: actualData.map((data) => data.y), // Actual sales data (y-values)
-        borderColor: 'blue',
-        backgroundColor: 'rgba(0, 123, 255, 0.5)',
-        fill: false,
+        borderColor: "#007bff", // Blue color for actual sales
+        backgroundColor: "rgba(0, 123, 255, 0.2)", // Light blue fill
+        fill: true,
         tension: 0.1,
       },
       {
-        label: 'Predicted Sales',
+        label: "Predicted Sales",
         data: predictions.length > 0 ? predictions : [], // Predicted sales data (y-values), empty if no predictions
-        borderColor: 'red',
-        backgroundColor: 'rgba(255, 0, 0, 0.5)',
-        fill: false,
+        borderColor: "#ff6347", // Red color for predicted sales
+        backgroundColor: "rgba(255, 99, 71, 0.2)", // Light red fill
+        fill: true,
         tension: 0.1,
       },
     ],
   };
 
   return (
-    <div>
-      <h1>Sales Forecasting</h1>
-      <FileUpload onDataParsed={handleFileProcessed} /> {/* File upload component */}
-      
+    <div style={styles.container}>
+      <h1 style={styles.header}>Sales Forecasting</h1>
+      <div style={styles.fileUploadContainer}>
+        <FileUpload onDataParsed={handleFileProcessed} />
+      </div>
+
       {/* Buttons for training and forecasting */}
-      <button onClick={handleTrainModel} disabled={!processedData}>
-        Train Model
-      </button>
-      <button onClick={handleForecastSales} disabled={!model}>
-        Forecast Sales
-      </button>
+      <div style={styles.buttonContainer}>
+        <button
+          onClick={handleTrainModel}
+          disabled={!processedData}
+          style={styles.button}
+        >
+          Train Model
+        </button>
+        <button
+          onClick={handleForecastSales}
+          disabled={!model}
+          style={styles.button}
+        >
+          Forecast Sales
+        </button>
+      </div>
 
       {/* Chart for displaying actual and predicted sales */}
       {predictions.length > 0 && (
-        <div>
-          <h2>Forecasted Sales</h2>
-          <Line data={chartData} /> {/* Display the chart */}
+        <div style={styles.chartContainer}>
+          <h2 style={styles.subHeader}>Forecasted Sales</h2>
+          <Line data={chartData} />
         </div>
       )}
     </div>
   );
 }
+
+// Simple internal styles for clean layout and aesthetics
+const styles = {
+  container: {
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    textAlign: "center",
+    padding: "20px",
+    backgroundColor: "#f4f7fc",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+    width: "80%",
+    margin: "auto",
+  },
+  header: {
+    color: "#333",
+    fontSize: "2rem",
+    marginBottom: "20px",
+  },
+  subHeader: {
+    color: "#333",
+    fontSize: "1.5rem",
+    marginBottom: "15px",
+  },
+  fileUploadContainer: {
+    marginBottom: "20px",
+  },
+  buttonContainer: {
+    marginBottom: "30px",
+  },
+  button: {
+    backgroundColor: "#007bff",
+    color: "white",
+    border: "none",
+    padding: "10px 20px",
+    fontSize: "1rem",
+    borderRadius: "5px",
+    cursor: "pointer",
+    margin: "10px",
+    transition: "background-color 0.3s ease",
+  },
+  buttonDisabled: {
+    backgroundColor: "#ccc",
+    cursor: "not-allowed",
+  },
+  buttonHover: {
+    backgroundColor: "#0056b3",
+  },
+  chartContainer: {
+    maxWidth: "800px",
+    margin: "auto",
+    padding: "20px",
+    backgroundColor: "#ffffff",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+  },
+};
 
 export default App;
